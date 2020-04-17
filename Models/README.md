@@ -20,12 +20,24 @@
     
 6. PCA
 
+    简单的主成分分析
+
 7. Kmeans
 
     Kmeans随机选择的样本的影响，所以有二分Kmeans还有LBG等等依托于Kmeans的算法，只是简单的扩展，就不实现了。
 
-8. kNN
+8. GDBT
 
-9. GDBT
+    待完成
 
-    
+9. RandomForest
+
+    待完成
+
+10. SVM
+
+    待完成
+
+11. NeuralNetwork
+
+    待完成
