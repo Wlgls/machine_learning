@@ -60,6 +60,21 @@ def test():
     plt.plot(X, yfit)
     plt.show()
 
+def main():
+    # 使用CART的数据测试一下
+    Data = np.loadtxt('Data/cart.txt', delimiter='\t')
+    X = Data[:, :-1].reshape((-1, 1))# 因为是一维的
+    y = Data[:, -1].reshape((-1, 1))
+    model = GBDT()
+    model.fit(X, y)
+    yfit = model.predict(X)
+    print(model.costErr(y, yfit))
+    plt.scatter(X, y)
+    x = np.linspace(0, 1, 100).reshape((100, 1))
+    ypre = model.predict(x)
+    plt.plot(x, ypre, c = 'r')
+    plt.show()
 
 if __name__ == '__main__':
-    test()
+    # 0test()
+    main()
