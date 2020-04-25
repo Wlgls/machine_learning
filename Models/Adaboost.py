@@ -79,13 +79,17 @@ class Adaboost:
         for i in range(MaxIter):
             bestStump, bestClass, epsilon = self.model.fit(X, y, u)
 
+            # 计alpha
             alpha = 0.5 * np.log((1.0-epsilon)/max(epsilon, 1e-16))# 防止为0
             bestStump['alpha'] = alpha
    
             self.WeakClassArr.append(bestStump)
+            
+            # 更新u
             expon = -1*alpha*y*bestClass# 分类正确为-alpha, 分类错误为+alpha
-            u = u*np.exp(expon) / np.sum(u)
+            u = u*np.exp(expon)
 
+            # 聚集
             aggclass += alpha*bestClass # 判断最终合并的分类结果
 
             aggErr = np.sum(self.sign(aggclass)!=y)/m

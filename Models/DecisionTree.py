@@ -223,9 +223,10 @@ class DecisionTree_CART(object):
                     T = T.childs[0]
                 else:
                     T = T.childs[1]
-    def predict(self, Data):
-        yfit = np.zeros(len(Data))
-        for i, d in enumerate(Data):
+                    
+    def predict(self, X):
+        yfit = np.zeros(len(X))
+        for i, d in enumerate(X):
             yfit[i] = self.predictx(d)
         return yfit
 
