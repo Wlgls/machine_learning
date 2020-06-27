@@ -52,7 +52,8 @@ class Network_331(object):
         # 反向传播
         # 代价函数为: ln(-yi ln(\theta(s))-(1-yi)ln(1-\theta(s)))
         # partj =  yi-\theta(s) = yi - zout# m*1
-        delta2 = label - zout   # 输出层的偏差 # m*1
+        delta2 = -label* self.sigmoid(-label * sout)
+        # delta2 = zout-label   # 输出层的偏差 # m*1
         #deltah1 = delta2 * self.w2[1][0] * d_sigmoid(s1[:, 1])  # m*1
         #deltah2 = delta2 * self.w2[2][0] * d_sigmoid(s1[:, 2])  # m*1
         #deltah3 = delta2 * self.w2[3][0] * d_sigmoid(s1[:, 3])  # m*1
@@ -82,8 +83,8 @@ class Network_331(object):
             yi = label[i, :].reshape((1, -1))# 1*1
             souti = sout[i, :].reshape((1, -1))
             s1i = np.insert(s1i, 0, 1, axis=1) # 1*4
-            delta2 = self.sigmoid(-yi*souti)*(-yi).reshape((-1, 1)) # 1*1
-
+            # delta2 = self.sigmoid(-yi*souti)*(-yi).reshape((-1, 1)) # 1*1
+            delta2 = zout1 - yi
             delta1 = np.dot(self.w2, delta2)*self.d_sigmoid(s1i).T#
             # 4*1
 
@@ -94,17 +95,23 @@ class Network_331(object):
         w1_grad = w1_grad/len(data)
         return w2_grad, w1_grad
 
-    def fit(self, data, label, eta=0.02, maxIter=1000):
+    def fit(self, data, label, eta=4, maxIter=1000):
         
         for i in range(maxIter):
             w2_grad, w1_grad = self.backpropbyvec(data, label)
-
+            print(self.costf(data, label))
             self.w2 -= eta * w2_grad
             self.w1 -= eta * w1_grad
 
     def predict(self, data):
         _, _, _,_, yfit = self.forward(data)
         return yfit
+
+    def costf(self, X, y):
+        yfit = self.predict(X)
+        # print(zout[:10])
+        cost = np.sum(-y * np.log(yfit)-(1-y)*np.log(1-yfit))
+        return cost/len(X)
 
 def make_data():
     data = np.array([0, 1])
@@ -115,7 +122,7 @@ def make_data():
         if(sum(i)%2 == 0):
             label.append(1)
         else:
-            label.append(0)
+            label.append(-1)
     return np.array(x), np.array(label).reshape((-1, 1))
 
 def test():
@@ -127,7 +134,7 @@ def test():
     print(yfit)
     # print(yfit)
     yfit[yfit>=0.5] = 1
-    yfit[yfit<0.5] = 0
+    yfit[yfit<0.5] = -1
     print(np.sum(label!=yfit))
     print(yfit)
 
@@ -135,15 +142,15 @@ def main():
     data,target= make_classification(n_samples=100, n_features=3, n_informative=2, n_redundant=0,n_repeated=0, n_classes=2, n_clusters_per_class=1)
     print(data.shape, target.shape)
     target = target.reshape((-1, 1))
-    #target[target==0] = -1
+    target[target==0] = -1
     model = Network_331()
-    model.fit(data, target, maxIter=10000)
+    model.fit(data, target, maxIter=1000)
     yfit = model.predict(data)
     # print(yfit)
     yfit[yfit>=0.5] = 1
-    yfit[yfit<0.5] = 0
+    yfit[yfit<0.5] = -1
     # print(np.concatenate((target, yfit), axis=1))
     print(np.sum(target!=yfit))
 if __name__ == '__main__':
-    # test()
-    main()
+    test()
+    # main()
